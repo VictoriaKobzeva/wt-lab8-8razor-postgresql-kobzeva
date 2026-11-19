@@ -17,3 +17,6 @@ appsettings.Development.json
 
 # Логи
 *.log
+
+# Word lock files
+~$*.docx
