@@ -34,9 +34,28 @@ if (string.IsNullOrWhiteSpace(connectionString))
         "или переменную окружения DATABASE_URL.");
 }
 
+// Render Free допускает только один инстанс PostgreSQL. Чтобы не смешивать
+// данные разных лабораторных, приложение может работать в отдельной схеме.
+var databaseSchema = builder.Configuration["DATABASE_SCHEMA"];
+if (!string.IsNullOrWhiteSpace(databaseSchema))
+{
+    if (!System.Text.RegularExpressions.Regex.IsMatch(databaseSchema, "^[A-Za-z_][A-Za-z0-9_]*$"))
+    {
+        throw new InvalidOperationException("Недопустимое имя схемы базы данных.");
+    }
+
+    connectionString += $";Search Path={databaseSchema}";
+}
+
 // Регистрация AppDbContext с провайдером PostgreSQL.
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString, npgsql =>
+    {
+        if (!string.IsNullOrWhiteSpace(databaseSchema))
+        {
+            npgsql.MigrationsHistoryTable("__EFMigrationsHistory", databaseSchema);
+        }
+    }));
 
 builder.Services.AddRazorPages();
 
@@ -55,6 +74,12 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if (!string.IsNullOrWhiteSpace(databaseSchema))
+    {
+        db.Database.ExecuteSqlRaw($"CREATE SCHEMA IF NOT EXISTS \"{databaseSchema}\"");
+    }
+
     db.Database.Migrate();
 }
 

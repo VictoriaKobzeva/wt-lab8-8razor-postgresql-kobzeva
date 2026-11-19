@@ -9,9 +9,14 @@ namespace wt_lab8_8razor_postgresql_kobzeva.Data;
 /// </summary>
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options)
+    private readonly string? _schema;
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration configuration)
         : base(options)
     {
+        // На Render Free используется одна база PostgreSQL на несколько работ,
+        // поэтому приложение может работать в отдельной схеме.
+        _schema = configuration["DATABASE_SCHEMA"];
     }
 
     public DbSet<Property> Properties => Set<Property>();
@@ -19,6 +24,11 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        if (!string.IsNullOrWhiteSpace(_schema))
+        {
+            modelBuilder.HasDefaultSchema(_schema);
+        }
 
         modelBuilder.Entity<Property>(entity =>
         {
