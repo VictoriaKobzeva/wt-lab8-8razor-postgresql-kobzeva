@@ -1,0 +1,14 @@
+bin/
+obj/
+.git/
+.gitignore
+.vs/
+.vscode/
+docs/
+*.docx
+*.pdf
+*.user
+.DS_Store
+README.md
+REPORT.md
+appsettings.Development.json

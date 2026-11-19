@@ -1,0 +1,19 @@
+databases:
+  - name: wt-lab8-db-kobzeva
+    databaseName: wt_lab8
+    user: wt_lab8_user
+    plan: free
+    region: frankfurt
+
+services:
+  - type: web
+    name: wt-lab8-8razor-postgresql-kobzeva
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wt-lab8-db-kobzeva
+          property: connectionString

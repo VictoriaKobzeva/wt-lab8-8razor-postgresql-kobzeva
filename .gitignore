@@ -1,0 +1,19 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# IDE
+.vscode/
+.idea/
+
+# Секреты: локальная строка подключения с паролем
+appsettings.Development.json
+
+# macOS
+.DS_Store
+
+# Логи
+*.log

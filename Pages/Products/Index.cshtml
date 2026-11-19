@@ -1,0 +1,114 @@
+﻿@page
+@model wt_lab8_8razor_postgresql_kobzeva.Pages.Products.IndexModel
+
+@{
+    ViewData["Title"] = "Объекты недвижимости";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">🏠 Каталог недвижимости</h1>
+            <p class="text-muted mb-1">Агентство недвижимости — УИР-1, Кобзева Виктория</p>
+            <p class="text-secondary mb-0">
+                Количество объектов: <strong>@Model.Properties.Count</strong>
+                @if (!string.IsNullOrWhiteSpace(Model.Search))
+                {
+                    <span class="text-muted">· поиск: «@Model.Search»</span>
+                }
+            </p>
+        </div>
+        <a asp-page="/Products/Create" class="btn btn-primary btn-lg">
+            ➕ Добавить объект
+        </a>
+    </div>
+
+    <form method="get" class="row g-2 align-items-center mb-4">
+        <div class="col-md-6">
+            <input type="text"
+                   name="Search"
+                   value="@Model.Search"
+                   class="form-control form-control-lg"
+                   placeholder="Поиск: адрес или тип объекта" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary btn-lg">
+                🔍 Найти
+            </button>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.Search))
+        {
+            <div class="col-auto">
+                <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
+                    Сбросить
+                </a>
+            </div>
+        }
+    </form>
+
+    @if (Model.Properties.Count == 0)
+    {
+        <div class="alert alert-info">
+            @if (!string.IsNullOrWhiteSpace(Model.Search))
+            {
+                <span>По запросу «@Model.Search» ничего не найдено.</span>
+            }
+            else
+            {
+                <span>Список пуст. Добавьте первый объект.</span>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var property in Model.Properties)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm rounded-4 border-0">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-secondary">ID: @property.Id</span>
+                                <span class="badge bg-info text-dark">@property.Type</span>
+                                @if (property.IsAvailable)
+                                {
+                                    <span class="badge bg-success">Доступен</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Недоступен</span>
+                                }
+                            </div>
+                            <h5 class="card-title fw-bold">@property.Address</h5>
+                            <p class="text-muted mb-2">
+                                📐 @property.Area м² · 🚪 @property.Rooms комн.
+                            </p>
+                            @if (!string.IsNullOrWhiteSpace(property.Description))
+                            {
+                                <p class="text-secondary small mb-2">@property.Description</p>
+                            }
+                            <p class="fs-4 fw-bold text-primary mt-auto">
+                                @property.Price.ToString("N0") BYN
+                            </p>
+                            <div class="d-flex flex-column gap-2 mt-auto">
+                                <div class="d-flex gap-2">
+                                    <a asp-page="/Products/Details" asp-route-id="@property.Id" class="btn btn-outline-primary flex-fill">
+                                        Подробнее
+                                    </a>
+                                    <a asp-page="/Products/Edit" asp-route-id="@property.Id" class="btn btn-outline-secondary">
+                                        ✏️
+                                    </a>
+                                </div>
+                                <form method="post" asp-page-handler="Delete" asp-route-id="@property.Id" onsubmit="return confirm('Вы уверены, что хотите удалить этот объект?');">
+                                    <button type="submit" class="btn btn-outline-danger w-100">
+                                        🗑️ Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
