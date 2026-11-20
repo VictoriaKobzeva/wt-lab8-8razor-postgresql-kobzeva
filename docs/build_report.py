@@ -457,15 +457,15 @@ code("""using (var scope = app.Services.CreateScope())
 
 # ---------- структура БД ----------
 doc.add_heading("8. Структура таблицы Properties", level=1)
-para("Структура таблицы после применения обеих миграций:")
+para("Структура таблицы после применения обеих миграций (pgAdmin 4, база wt_lab8):")
 image("09-db-structure.jpeg", 16.4,
-      "Рис. 1. Структура таблицы Properties (вывод psql)")
+      "Рис. 1. Структура таблицы Properties в pgAdmin 4")
 para("Таблица содержит первичный ключ PK_Properties, поля Address, Type, Price "
      "(numeric(18,2)), Area, Rooms, IsAvailable и добавленное поле Description. "
      "Структура соответствует модели Property.")
 para("История применённых миграций хранится в таблице __EFMigrationsHistory:")
 image("10-migrations-history.jpeg", 16.0,
-      "Рис. 2. Содержимое таблицы __EFMigrationsHistory")
+      "Рис. 2. Содержимое таблицы __EFMigrationsHistory в pgAdmin 4")
 table(["MigrationId", "ProductVersion"],
       [["20261119115243_InitialCreate", "8.0.11"],
        ["20261119115322_AddPropertyDescription", "8.0.11"]],
@@ -658,7 +658,7 @@ para("После миграции в таблице появился столб�
      "записи сохранились. Обновлённая структура таблицы показана на рис. 1 "
      "(раздел 8). Данные в таблице:")
 image("11-db-data.jpeg", 16.0,
-      "Рис. 11. Данные таблицы Properties после миграции")
+      "Рис. 11. Данные таблицы Properties после миграции (pgAdmin 4)")
 para("На страницах создания, редактирования, просмотра и в карточке списка "
      "добавлено отображение описания. Поиск также учитывает Description.")
 
@@ -766,8 +766,8 @@ table(["Операция", "Где проверено", "Результат"],
        ["Удаление", "Кнопка «Удалить»", "Объект удалён, осталось 6"],
        ["Поиск «Минск»", "/Products?Search=Минск", "Найдено 2 объекта"],
        ["Перезапуск приложения", "dotnet run", "Все 6 записей сохранились"],
-       ["Таблица Properties", "psql", "8 столбцов, PK_Properties"],
-       ["__EFMigrationsHistory", "psql", "2 применённые миграции"],
+       ["Таблица Properties", "pgAdmin 4", "8 столбцов, PK_Properties"],
+       ["__EFMigrationsHistory", "pgAdmin 4", "2 применённые миграции"],
        ["Публикация на Render", "/Products (onrender.com)", "200 OK, 6 объектов, схема wt_lab8"]],
       widths=[4.8, 5.4, 5.6], font=10)
 
