@@ -154,8 +154,25 @@ docker run -p 10000:10000 \
 Порт берётся из переменной `PORT` (по умолчанию `10000`), приложение слушает
 `http://0.0.0.0:{port}`. Миграции применяются при запуске контейнера.
 
-В каталоге есть `render.yaml` — Blueprint, который создаёт PostgreSQL и
-Web Service (Runtime: Docker) и связывает их через `DATABASE_URL`.
+### Отдельная схема на Render
+
+Бесплатный тариф Render допускает только один активный инстанс PostgreSQL на
+аккаунт, поэтому лабораторная работа использует существующий инстанс
+`wt-lab7-db-kobzeva`, но работает в отдельной схеме `wt_lab8`. Схема задаётся
+переменной окружения `DATABASE_SCHEMA`; в строку подключения добавляется
+`Search Path=wt_lab8`, а таблицы `Properties` и `__EFMigrationsHistory`
+создаются внутри этой схемы. Данные лабораторной работы № 7 (схема `public`)
+не затрагиваются.
+
+```csharp
+var databaseSchema = builder.Configuration["DATABASE_SCHEMA"];
+connectionString += $";Search Path={databaseSchema}";
+```
+
+В каталоге есть `render.yaml` — вариант развёртывания через Blueprint: он создаёт
+PostgreSQL и Web Service (Runtime: Docker) и связывает их через `DATABASE_URL`.
+В текущем развёртывании использован существующий инстанс PostgreSQL (лимит
+Free-тарифа — одна база на аккаунт), а `render.yaml` оставлен как альтернатива.
 
 ## Ссылки
 

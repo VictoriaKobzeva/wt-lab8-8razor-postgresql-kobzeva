@@ -719,22 +719,30 @@ code("""a559a14 Подключение PostgreSQL и Entity Framework Core""")
 
 # ---------- Render ----------
 doc.add_heading("16. Публикация на Render", level=1)
-para("На Render созданы PostgreSQL и Web Service (Runtime: Docker), "
-     "подключённый к GitHub-репозиторию. Строка подключения передаётся "
-     "в приложение через переменную окружения DATABASE_URL (Internal Database URL).")
+para("На Render создан Web Service (Runtime: Docker), подключённый к "
+     "GitHub-репозиторию. Строка подключения к PostgreSQL передаётся "
+     "в приложение через переменную окружения DATABASE_URL (Internal Database URL), "
+     "а имя схемы — через DATABASE_SCHEMA.")
 para("Схема подключения:")
 code("""Application
       ↓
-Environment Variables (DATABASE_URL)
+Environment Variables (DATABASE_URL, DATABASE_SCHEMA)
       ↓
-PostgreSQL""")
+PostgreSQL (схема wt_lab8)""")
 para("Параметры Render:")
 table(["Ресурс", "Значение"],
-      [["PostgreSQL", "wt-lab8-db-kobzeva, Frankfurt, Free"],
+      [["PostgreSQL", "инстанс wt-lab7-db-kobzeva, Frankfurt, Free"],
+       ["Схема лабораторной работы", "wt_lab8 (переменная DATABASE_SCHEMA)"],
        ["Web Service", "wt-lab8-8razor-postgresql-kobzeva, Docker, Free"],
-       ["Переменная окружения", "DATABASE_URL"],
+       ["Переменные окружения", "DATABASE_URL, DATABASE_SCHEMA"],
        ["Публичный URL", "https://wt-lab8-8razor-postgresql-kobzeva.onrender.com"]],
-      widths=[4.6, 11.2])
+      widths=[5.2, 10.6])
+para("Бесплатный тариф Render разрешает только один активный инстанс PostgreSQL "
+     "на аккаунт, поэтому приложение использует существующий инстанс "
+     "лабораторной работы № 7, но работает в отдельной схеме wt_lab8. "
+     "Переменная DATABASE_SCHEMA добавляет в строку подключения Search Path, "
+     "а история миграций и таблица Properties создаются внутри этой схемы. "
+     "Схема public с данными WT-7 не изменяется.")
 para("При запуске контейнера выполняется db.Database.Migrate(), поэтому "
      "структура удалённой базы создаётся автоматически.")
 if IMG.joinpath("13-render-app.jpeg").exists():
@@ -759,7 +767,8 @@ table(["Операция", "Где проверено", "Результат"],
        ["Поиск «Минск»", "/Products?Search=Минск", "Найдено 2 объекта"],
        ["Перезапуск приложения", "dotnet run", "Все 6 записей сохранились"],
        ["Таблица Properties", "psql", "8 столбцов, PK_Properties"],
-       ["__EFMigrationsHistory", "psql", "2 применённые миграции"]],
+       ["__EFMigrationsHistory", "psql", "2 применённые миграции"],
+       ["Публикация на Render", "/Products (onrender.com)", "200 OK, 6 объектов, схема wt_lab8"]],
       widths=[4.8, 5.4, 5.6], font=10)
 
 # ---------- вывод ----------
